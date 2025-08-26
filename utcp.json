@@ -71,8 +71,8 @@
         "properties": {
           "apiKey": { "type": "string" },
           "systemId": { "type": "string" },
-          "startDate": { "type": "string", "description": "ISO-8601 like 2025-08-26T00:00:00.000" },
-          "endDate": { "type": "string", "description": "ISO-8601 like 2025-08-26T23:59:59.999" }
+          "startDate": { "type": "string", "format": "date-time", "description": "ISO-8601 like 2025-08-26T00:00:00.000" },
+          "endDate": { "type": "string", "format": "date-time", "description": "ISO-8601 like 2025-08-26T23:59:59.999" }
         },
         "required": ["apiKey", "systemId", "startDate", "endDate"],
         "additionalProperties": false
@@ -98,9 +98,6 @@
         }
       ]
     },
-
-    /* ---------- Device specific convenience tools ---------- */
-
     {
       "name": "cafeteria_last",
       "description": "Latest measurements for device CAFETERIA",
@@ -118,8 +115,8 @@
       "inputs": {
         "type": "object",
         "properties": {
-          "startDate": { "type": "string" },
-          "endDate": { "type": "string" }
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" }
         },
         "required": ["startDate", "endDate"],
         "additionalProperties": false
@@ -132,7 +129,6 @@
         "path_params": ["startDate", "endDate"]
       }
     },
-
     {
       "name": "main_office_last",
       "description": "Latest measurements for device MAIN OFFICE SPACE WELL",
@@ -150,8 +146,8 @@
       "inputs": {
         "type": "object",
         "properties": {
-          "startDate": { "type": "string" },
-          "endDate": { "type": "string" }
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" }
         },
         "required": ["startDate", "endDate"],
         "additionalProperties": false
@@ -164,7 +160,6 @@
         "path_params": ["startDate", "endDate"]
       }
     },
-
     {
       "name": "laboratory_last",
       "description": "Latest measurements for device LABORATORY",
@@ -182,8 +177,8 @@
       "inputs": {
         "type": "object",
         "properties": {
-          "startDate": { "type": "string" },
-          "endDate": { "type": "string" }
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" }
         },
         "required": ["startDate", "endDate"],
         "additionalProperties": false
