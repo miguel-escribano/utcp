@@ -1,0 +1,200 @@
+{
+  "version": "1.0",
+  "name": "inbiot-public-api",
+  "description": "UTCP manual for inBiot MICA devices exposed via myinbiotpublicapi.com",
+  "tags": ["iaq", "sensors", "co2", "pm", "voc", "temperature", "humidity", "inbiot"],
+  "contact": {
+    "name": "API Support",
+    "email": "support@inbiot.es",
+    "url": "https://www.inbiot.es/support"
+  },
+  "rate_limits": {
+    "note": "6 requests per hour per endpoint per device"
+  },
+  "tools": [
+    {
+      "name": "get_last_measurements",
+      "description": "Retrieve latest measurements for any device using apiKey and systemId",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "apiKey": { "type": "string", "description": "Device API key from My inBiot" },
+          "systemId": { "type": "string", "description": "Device systemId from My inBiot" }
+        },
+        "required": ["apiKey", "systemId"],
+        "additionalProperties": false
+      },
+      "outputs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "type": { "type": "string", "description": "parameter type like co2, pm25, temperature" },
+            "unit": { "type": "string" },
+            "measurements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string" },
+                  "value": { "type": "string" },
+                  "date": { "type": "number", "description": "unix timestamp in ms UTC" }
+                },
+                "required": ["value", "date"]
+              }
+            }
+          },
+          "required": ["type", "unit", "measurements"]
+        }
+      },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/last-measurements/{apiKey}/{systemId}",
+        "http_method": "GET",
+        "path_params": ["apiKey", "systemId"]
+      },
+      "examples": [
+        {
+          "arguments": {
+            "apiKey": "b778db39-7dd4-11f0-8d98-ef93cd338174",
+            "systemId": "70d2043e6520aa14bbe5867f225c1ebafe5c091f"
+          }
+        }
+      ]
+    },
+    {
+      "name": "get_measurements_by_time",
+      "description": "Retrieve measurements between two ISO-8601 timestamps for any device",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "apiKey": { "type": "string" },
+          "systemId": { "type": "string" },
+          "startDate": { "type": "string", "description": "ISO-8601 like 2025-08-26T00:00:00.000" },
+          "endDate": { "type": "string", "description": "ISO-8601 like 2025-08-26T23:59:59.999" }
+        },
+        "required": ["apiKey", "systemId", "startDate", "endDate"],
+        "additionalProperties": false
+      },
+      "outputs": {
+        "type": "array",
+        "items": { "$ref": "#/tools/0/outputs/items" }
+      },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/measurements-by-time/{apiKey}/{systemId}/{startDate}/{endDate}",
+        "http_method": "GET",
+        "path_params": ["apiKey", "systemId", "startDate", "endDate"]
+      },
+      "examples": [
+        {
+          "arguments": {
+            "apiKey": "b778db39-7dd4-11f0-8d98-ef93cd338174",
+            "systemId": "70d2043e6520aa14bbe5867f225c1ebafe5c091f",
+            "startDate": "2025-08-01T00:00:00.000",
+            "endDate": "2025-08-26T23:59:59.999"
+          }
+        }
+      ]
+    },
+
+    /* ---------- Device specific convenience tools ---------- */
+
+    {
+      "name": "cafeteria_last",
+      "description": "Latest measurements for device CAFETERIA",
+      "inputs": { "type": "object", "properties": {}, "additionalProperties": false },
+      "outputs": { "$ref": "#/tools/0/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/last-measurements/b778db39-7dd4-11f0-8d98-ef93cd338174/70d2043e6520aa14bbe5867f225c1ebafe5c091f",
+        "http_method": "GET"
+      }
+    },
+    {
+      "name": "cafeteria_by_time",
+      "description": "Measurements for CAFETERIA between startDate and endDate",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" }
+        },
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
+      },
+      "outputs": { "$ref": "#/tools/1/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/measurements-by-time/b778db39-7dd4-11f0-8d98-ef93cd338174/70d2043e6520aa14bbe5867f225c1ebafe5c091f/{startDate}/{endDate}",
+        "http_method": "GET",
+        "path_params": ["startDate", "endDate"]
+      }
+    },
+
+    {
+      "name": "main_office_last",
+      "description": "Latest measurements for device MAIN OFFICE SPACE WELL",
+      "inputs": { "type": "object", "properties": {}, "additionalProperties": false },
+      "outputs": { "$ref": "#/tools/0/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/last-measurements/58111450-804d-11f0-9ff6-fd889c2be7fe/306b84552893bd6aa208edcee30486b0fbb9260b",
+        "http_method": "GET"
+      }
+    },
+    {
+      "name": "main_office_by_time",
+      "description": "Measurements for MAIN OFFICE SPACE WELL between startDate and endDate",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" }
+        },
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
+      },
+      "outputs": { "$ref": "#/tools/1/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/measurements-by-time/58111450-804d-11f0-9ff6-fd889c2be7fe/306b84552893bd6aa208edcee30486b0fbb9260b/{startDate}/{endDate}",
+        "http_method": "GET",
+        "path_params": ["startDate", "endDate"]
+      }
+    },
+
+    {
+      "name": "laboratory_last",
+      "description": "Latest measurements for device LABORATORY",
+      "inputs": { "type": "object", "properties": {}, "additionalProperties": false },
+      "outputs": { "$ref": "#/tools/0/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/last-measurements/2083070c-45db-11f0-b9bc-4be3779dc937/5b0e3a1544b3537c6536a4230d9514c2bdcaf29b",
+        "http_method": "GET"
+      }
+    },
+    {
+      "name": "laboratory_by_time",
+      "description": "Measurements for LABORATORY between startDate and endDate",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "startDate": { "type": "string" },
+          "endDate": { "type": "string" }
+        },
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
+      },
+      "outputs": { "$ref": "#/tools/1/outputs" },
+      "tool_provider": {
+        "provider_type": "http",
+        "url": "https://myinbiotpublicapi.com/measurements-by-time/2083070c-45db-11f0-b9bc-4be3779dc937/5b0e3a1544b3537c6536a4230d9514c2bdcaf29b/{startDate}/{endDate}",
+        "http_method": "GET",
+        "path_params": ["startDate", "endDate"]
+      }
+    }
+  ]
+}
